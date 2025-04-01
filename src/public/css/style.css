@@ -1,0 +1,453 @@
+/*
+ * Modern Glass Theme with Enhanced Visuals
+ *
+ * Main stylesheet for the GraphQL Profile application featuring a modern
+ * glassmorphism design with subtle animations and responsive layouts.
+ *
+ * Version: 1.0
+ */
+
+/* ==========================================================================
+   Color Variables and Theme Configuration
+   ========================================================================== */
+:root {
+    --text-color: #ffffff;
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    --card-background: rgba(255, 255, 255, 0.07);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --hover-color: rgba(255, 255, 255, 0.1);
+    --success-color: #10b981;
+    --error-color: #ef4444;
+    --primary-color: #3b82f6;
+    --secondary-color: #8b5cf6;
+    --accent-color: #f59e0b;
+}
+
+/* ==========================================================================
+   Base Layout Styles
+   ========================================================================== */
+body {
+    background: var(--background);
+    color: var(--text-color);
+    font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* ==========================================================================
+   Glassmorphism Card Component
+   ========================================================================== */
+/* Base card styling with glass effect */
+.glassmorphism-card {
+    background: var(--card-background);
+    backdrop-filter: blur(16px); /* Creates frosted glass effect */
+    border: 1px solid var(--card-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border-radius: 24px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Light sweep animation effect on hover */
+.glassmorphism-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    transition: 0.5s;
+}
+
+.glassmorphism-card:hover::before {
+    left: 100%; /* Animate the light sweep from left to right */
+}
+
+.glassmorphism-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-5px); /* Slight lift effect on hover */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+/* ==========================================================================
+   Profile Layout Components
+   ========================================================================== */
+.profile {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+}
+
+.profile__header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Gradient text effect for headings */
+.header-content h1 {
+    font-size: 1.8rem;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+/* Text glow effect for emphasis */
+.glow-text {
+    text-shadow: 0 0 10px rgba(59, 130, 246, 0.5), 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+/* ==========================================================================
+   Button Components
+   ========================================================================== */
+/* Modern gradient button with hover effects */
+.btn-modern {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border: none;
+    padding: 12px 28px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+/* Button hover animation with gradient shift */
+.btn-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    transition: all 0.4s ease;
+    z-index: -1;
+    border-radius: 12px;
+}
+
+.btn-modern:hover::before {
+    width: 100%;
+}
+
+.btn-modern:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4);
+}
+
+/* Logout button with error color scheme */
+.btn-logout {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(45deg, var(--error-color), #b91c1c);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.btn-logout:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+}
+
+.btn-logout:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Card Components
+   ========================================================================== */
+.info-card, .stat-card {
+    background: var(--card-background);
+    border-radius: 16px;
+    padding: 1.2rem;
+    min-height: 120px;
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.info-card:hover, .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    border-color: var(--primary-color);
+}
+
+/* Subtle gradient overlay on hover */
+.info-card:before, .stat-card:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, var(--hover-color));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.info-card:hover:before, .stat-card:hover:before {
+    opacity: 1;
+}
+
+/* ==========================================================================
+   Chart Visualization Components
+   ========================================================================== */
+.chart-container {
+    position: relative;
+    height: 200px;
+    margin-top: 1rem;
+}
+
+.chart-svg {
+    height: 100%;
+    width: 100%;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+}
+
+/* Smooth animations for chart elements */
+.chart-svg circle {
+    transition: stroke-dasharray 0.8s ease-in-out, stroke-width 0.3s ease;
+}
+
+.chart-svg text {
+    fill: var(--text-color);
+    font-weight: 600;
+    font-size: 16px;
+}
+
+/* ==========================================================================
+   User Detail Components
+   ========================================================================== */
+.user-detail {
+    padding: 0.5rem 0;
+    transition: transform 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.user-detail:last-child {
+    border-bottom: none;
+}
+
+/* Subtle hover effect for list items */
+.user-detail:hover {
+    transform: translateX(5px);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    padding-left: 8px;
+}
+
+/* ==========================================================================
+   Project Components
+   ========================================================================== */
+.project-tile {
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.project-tile:hover {
+    transform: scale(1.03);
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.3));
+}
+
+/* ==========================================================================
+   Animation Effects
+   ========================================================================== */
+/* Pulsing icon animation */
+.icon-pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ==========================================================================
+   Custom Scrollbar Styling
+   ========================================================================== */
+/* WebKit (Chrome, Safari, newer Edge) scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.6);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.5);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.7);
+}
+
+/* Firefox scrollbar */
+.scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(59, 130, 246, 0.5) rgba(15, 23, 42, 0.6);
+}
+
+/* ==========================================================================
+   Project List Components
+   ========================================================================== */
+.project-item {
+    transition: all 0.3s ease-in-out;
+    padding: 0.75rem;
+    border-radius: 8px;
+}
+
+.project-item:hover {
+    transform: translateX(8px);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* ==========================================================================
+   Background Animation Elements
+   ========================================================================== */
+.bg-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.bg-animation span {
+    position: absolute;
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+    animation: move 15s linear infinite;
+}
+
+/* Floating particles animation */
+@keyframes move {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+        border-radius: 0;
+    }
+    100% {
+        transform: translateY(-1000px) rotate(720deg);
+        opacity: 0;
+        border-radius: 50%;
+    }
+}
+
+/* ==========================================================================
+   Loading Indicators
+   ========================================================================== */
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s ease-in-out infinite;
+    margin: 2rem auto;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==========================================================================
+   Responsive Design Adjustments
+   ========================================================================== */
+@media (max-width: 768px) {
+    .profile {
+        padding: 1rem;
+        margin: 1rem auto;
+    }
+    
+    .header-content h1 {
+        font-size: 1.5rem;
+    }
+    
+    .info-card, .stat-card {
+        padding: 1rem;
+        min-height: 100px;
+    }
+    
+    .btn-modern, .btn-logout {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .profile__grid {
+        gap: 1rem;
+    }
+}
+
+/* ==========================================================================
+   Dark Mode Enhancements
+   ========================================================================== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --card-background: rgba(255, 255, 255, 0.08);
+        --card-border: rgba(255, 255, 255, 0.12);
+    }
+    
+    .glassmorphism-card {
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* ==========================================================================
+   Utility Classes
+   ========================================================================== */
+.text-gradient {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.shadow-glow {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+}
+
+.transition-all {
+    transition: all 0.3s ease;
+}
