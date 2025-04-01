@@ -200,105 +200,101 @@
 
     <!-- Main application container with responsive padding -->
     <div id="app" class="container mx-auto p-6">
-        <!-- The welcome card has been removed -->
+        <!-- Initial welcome card (will be replaced by login/profile views) -->
+        <div class="glassmorphism-card p-10 max-w-lg mx-auto mt-16">
+            <div class="text-center mb-2">
+                <i class="fas fa-user-circle text-5xl text-blue-400 icon-pulse mb-4"></i>
+            </div>
+            <h1 class="text-4xl font-bold mb-6 text-center glow-text bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">Welcome to Your Profile</h1>
+            <p class="mb-8 text-center text-gray-300 text-lg">Discover your progress and achievements in one beautiful dashboard.</p>
+            
+            <div class="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 justify-center">
+                <button class="btn-modern flex items-center justify-center">
+                    <i class="fas fa-chart-line mr-2"></i>
+                    View Statistics
+                </button>
+                <button class="btn-modern flex items-center justify-center" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    <i class="fas fa-project-diagram mr-2"></i>
+                    My Projects
+                </button>
+            </div>
+            
+            <div class="mt-10 pt-8 border-t border-gray-700">
+                <p class="text-center text-gray-400 text-sm">
+                    <i class="fas fa-lock mr-1"></i> Secure access to your personalized dashboard
+                </p>
+            </div>
+        </div>
     </div>
     
     <!-- Main application JavaScript using ES modules -->
     <script type="module">
-        // Import the main app module
+        // Import necessary controller and model classes
         import { AuthController } from './src/controllers/AuthController.js';
         import { Auth } from './src/models/Auth.js';
         
-        console.log('Index.html script loaded');
+        // Initialize controller variable for global scope access
+        let authController;
         
-        // Initialize auth service
+        // Create authentication model instance
         const auth = new Auth();
-        console.log('Auth service initialized');
         
-        // Handle routing
+        // Set up browser history navigation handler
+        window.addEventListener('popstate', handleRoute);
+        
+        // Initialize the application when DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Create auth controller instance
+            authController = new AuthController();
+            
+            // Handle the initial route based on URL
+            handleRoute();
+            
+            // Create animated background elements
+            createBackgroundElements();
+        });
+
+        // Route handling function to manage application views
         function handleRoute() {
-            console.log('handleRoute called');
             // Get current URL path
             const path = window.location.pathname;
-            const hostname = window.location.hostname;
             
-            console.log('Current path:', path);
-            console.log('Hostname:', hostname);
-            
-            // Allow both localhost and GitHub Pages
-            const isGitHubPages = hostname.includes('github.io');
-            const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
-            
-            console.log('Is GitHub Pages:', isGitHubPages);
-            console.log('Is localhost:', isLocalhost);
-            
-            // Get the repository name from the path if on GitHub Pages
-            let basePath = '';
-            if (isGitHubPages) {
-                // Extract the repository name from the path
-                const pathParts = path.split('/');
-                if (pathParts.length > 1) {
-                    basePath = '/' + pathParts[1];
+            // Profile route logic
+            if (path === '/profile/') {
+                // Redirect to login if not authenticated
+                if (!auth.isAuthenticated()) {
+                    history.pushState(null, '', '/');
+                    authController.showLogin();
+                    return;
                 }
-            }
-            
-            console.log('Base path:', basePath);
-            
-            // Valid routes
-            const homePath = basePath + '/';
-            const profilePath = basePath + '/profile/';
-            
-            console.log('Home path:', homePath);
-            console.log('Profile path:', profilePath);
-            
-            if (path === homePath || path === profilePath) {
-                console.log('Valid route detected:', path);
-                
-                // Profile route logic
-                if (path === profilePath) {
-                    console.log('Profile route detected');
-                    // Redirect to login if not authenticated
-                    if (!auth.isAuthenticated()) {
-                        console.log('Not authenticated, redirecting to login');
-                        window.location.href = homePath;
-                        return;
-                    }
-                    console.log('Authenticated, showing profile');
-                }
-                
-                // Initialize the auth controller
-                console.log('Initializing AuthController');
-                try {
-                    new AuthController();
-                    console.log('AuthController initialized successfully');
-                } catch (error) {
-                    console.error('Error initializing AuthController:', error);
-                }
+                // Show profile for authenticated users
+                authController.showProfile();
             } else {
-                console.log('Invalid route detected:', path);
-                showErrorPage(basePath);
+                // Redirect to profile if already authenticated
+                if (auth.isAuthenticated()) {
+                    history.pushState(null, '', '/profile/');
+                    authController.showProfile();
+                    return;
+                }
+                // Show login for non-authenticated users
+                authController.showLogin();
             }
         }
         
-        // Show error page
-        function showErrorPage(basePath = '') {
-            document.getElementById('app').classList.add('hidden');
-            document.getElementById('error-page').classList.remove('hidden');
-            
-            // Add event listener to the home button
-            const homeBtn = document.getElementById('go-home-btn');
-            if (homeBtn) {
-                homeBtn.addEventListener('click', () => {
-                    window.location.href = basePath + '/';
-                });
+        // Function to create dynamic background elements
+        function createBackgroundElements() {
+            const bgAnimation = document.querySelector('.bg-animation');
+            for (let i = 0; i < 15; i++) {
+                const span = document.createElement('span');
+                span.style.top = Math.random() * 100 + '%';
+                span.style.left = Math.random() * 100 + '%';
+                span.style.width = Math.random() * 80 + 20 + 'px';
+                span.style.height = span.style.width;
+                span.style.animationDelay = Math.random() * 15 + 's';
+                span.style.animationDuration = Math.random() * 20 + 15 + 's';
+                bgAnimation.appendChild(span);
             }
         }
-        
-        // Call handleRoute when the page loads
-        window.addEventListener('DOMContentLoaded', handleRoute);
-        
-        // Listen for navigation events
-        window.addEventListener('popstate', handleRoute);
     </script>
 </body>
 </html>
