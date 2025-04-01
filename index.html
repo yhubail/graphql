@@ -230,32 +230,40 @@
             createBackgroundElements();
         });
 
-        // Route handling function to manage application views
-        function handleRoute() {
-            // Get current URL path
-            const path = window.location.pathname;
-            
-            // Profile route logic
-            if (path === '/profile/') {
-                // Redirect to login if not authenticated
-                if (!auth.isAuthenticated()) {
-                    history.pushState(null, '', '/');
-                    authController.showLogin();
-                    return;
-                }
-                // Show profile for authenticated users
-                authController.showProfile();
-            } else {
-                // Redirect to profile if already authenticated
-                if (auth.isAuthenticated()) {
-                    history.pushState(null, '', '/profile/');
-                    authController.showProfile();
-                    return;
-                }
-                // Show login for non-authenticated users
-                authController.showLogin();
+    // Route handling function to manage application views
+    function handleRoute() {
+        // Check if the page was refreshed
+        if (performance && performance.navigation && performance.navigation.type === 1) {
+            console.log('Page was refreshed, showing login');
+            // Log out any authenticated user
+            if (auth.isAuthenticated()) {
+                auth.logout();
             }
+            // Show login page
+            authController.showLogin();
+            return;
         }
+        
+        // For normal navigation: show profile if authenticated, otherwise show login
+        if (auth.isAuthenticated()) {
+            console.log('User is authenticated, showing profile');
+            authController.showProfile();
+        } else {
+            console.log('User is not authenticated, showing login');
+            authController.showLogin();
+        }
+    }
+        
+        // Add specific handler for back button
+        window.addEventListener('popstate', function() {
+            console.log('Back button was pressed, showing login');
+            // Log out any authenticated user
+            if (auth.isAuthenticated()) {
+                auth.logout();
+            }
+            // Show login page
+            authController.showLogin();
+        });
         
         // Function to create dynamic background elements
         function createBackgroundElements() {

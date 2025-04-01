@@ -78,8 +78,7 @@ export class AuthController {
             // Attempt to authenticate with the provided credentials
             await this.auth.login(credentials);
             
-            // On successful login, navigate to the profile page
-            history.pushState(null, '', '/profile/');
+            // On successful login, just show profile without changing URL
             this.showProfile();
         } catch (error) {
             // On authentication failure, re-render the login view with an error message
