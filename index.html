@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Page title that appears in browser tab -->
-    <title>GraphQL Profile</title>
+    <title>GraphQL Profile Dashboard</title>
     
     <!-- External CSS libraries -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
@@ -200,17 +200,53 @@
 
     <!-- Main application container with responsive padding -->
     <div id="app" class="container mx-auto px-4 py-8">
-        <!-- This is where your login form will be rendered -->
+        <!-- Fallback login form that will show if JavaScript fails -->
+        <div id="fallback-login" class="flex flex-col items-center justify-center min-h-[80vh]">
+            <div class="w-full max-w-md p-8 space-y-8 bg-gray-800 bg-opacity-50 backdrop-blur-lg rounded-xl shadow-lg border border-gray-700">
+                <div class="text-center">
+                    <h1 class="text-3xl font-bold text-white">GraphQL Profile Dashboard</h1>
+                    <p class="mt-2 text-gray-300">Sign in to access your profile</p>
+                </div>
+                
+                <form id="fallback-login-form" class="mt-8 space-y-6">
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-gray-300">Username</label>
+                        <input id="username" name="username" type="text" required class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-300">Password</label>
+                        <input id="password" name="password" type="password" required class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <div>
+                        <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Sign in
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <p class="text-sm text-gray-400">This is a fallback login form. JavaScript may not be loading correctly.</p>
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- Error page container -->
     <div id="error-page" class="hidden">
-        <!-- Error page content -->
+        <div class="flex flex-col items-center justify-center min-h-screen p-4">
+            <div class="w-full max-w-md p-8 space-y-6 bg-gray-800 bg-opacity-50 backdrop-blur-lg rounded-xl shadow-lg border border-gray-700 text-center">
+                <h1 class="text-3xl font-bold text-white">Oops!</h1>
+                <p class="text-xl text-gray-300">Something went wrong</p>
+                <p class="text-gray-400">This page is not available or you don't have permission to access it.</p>
+                <button id="go-home-btn" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Go to Homepage</button>
+            </div>
+        </div>
     </div>
-    
-    <!-- Main application JavaScript using ES modules -->
+
     <script type="module">
-        // Import the main app module with a relative path
+        // Import the main app module
         import { AuthController } from './src/controllers/AuthController.js';
         import { Auth } from './src/services/Auth.js';
         
@@ -253,6 +289,9 @@
             if (path === '/' || path === basePath + '/' || path === basePath + '/profile/') {
                 console.log('Valid route detected:', path);
                 
+                // Hide fallback login form
+                document.getElementById('fallback-login').style.display = 'none';
+                
                 // Profile route logic
                 if (path === basePath + '/profile/') {
                     console.log('Profile route detected');
@@ -272,6 +311,8 @@
                     console.log('AuthController initialized successfully');
                 } catch (error) {
                     console.error('Error initializing AuthController:', error);
+                    // Show fallback login if there's an error
+                    document.getElementById('fallback-login').style.display = 'flex';
                 }
             } else {
                 console.log('Invalid route detected:', path);
@@ -279,32 +320,11 @@
             }
         }
         
-        // Simple function to show error page
+        // Show error page
         function showErrorPage() {
-            const appContainer = document.getElementById('app');
-            appContainer.innerHTML = `
-                <div class="flex flex-col items-center justify-center min-h-screen p-4 text-center">
-                    <div class="glassmorphism-card p-8 max-w-lg w-full">
-                        <h1 class="text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">404</h1>
-                        <h2 class="text-2xl font-semibold mb-4 text-white">Page Not Found</h2>
-                        <p class="text-gray-300 mb-8">The page you are looking for doesn't exist or has been moved.</p>
-                        
-                        <div class="my-8">
-                            <svg width="200" height="120" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="mx-auto">
-                                <path d="M20 50H180M20 50L40 20H160L180 50M20 50V100H180V50" stroke="#3B82F6" stroke-width="2"/>
-                                <path d="M80 70L100 90L120 70" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M100 90V50" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                        </div>
-                        
-                        <button id="go-home-btn" class="btn-modern">
-                            <i class="fas fa-home mr-2"></i>
-                            Go to Homepage
-                        </button>
-                    </div>
-                </div>
-            `;
-
+            document.getElementById('app').classList.add('hidden');
+            document.getElementById('error-page').classList.remove('hidden');
+            
             // Add event listener to the home button
             const homeBtn = document.getElementById('go-home-btn');
             if (homeBtn) {
@@ -316,20 +336,18 @@
             }
         }
         
-        // Function to create dynamic background elements
-        function createBackgroundElements() {
-            const bgAnimation = document.querySelector('.bg-animation');
-            for (let i = 0; i < 15; i++) {
-                const span = document.createElement('span');
-                span.style.top = Math.random() * 100 + '%';
-                span.style.left = Math.random() * 100 + '%';
-                span.style.width = Math.random() * 80 + 20 + 'px';
-                span.style.height = span.style.width;
-                span.style.animationDelay = Math.random() * 15 + 's';
-                span.style.animationDuration = Math.random() * 20 + 15 + 's';
-                bgAnimation.appendChild(span);
-            }
-        }
+        // Add event listener for the fallback login form
+        document.getElementById('fallback-login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Fallback login form submitted');
+            alert('Login functionality requires JavaScript to be working properly. Please check the console for errors.');
+        });
+        
+        // Call handleRoute when the page loads
+        window.addEventListener('DOMContentLoaded', handleRoute);
+        
+        // Listen for navigation events
+        window.addEventListener('popstate', handleRoute);
     </script>
 </body>
 </html>
