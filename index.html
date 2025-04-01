@@ -205,124 +205,100 @@
     
     <!-- Main application JavaScript using ES modules -->
     <script type="module">
-        // Import necessary controller and model classes
+        // Import the main app module
         import { AuthController } from './src/controllers/AuthController.js';
         import { Auth } from './src/models/Auth.js';
         
-        // Initialize controller variable for global scope access
-        let authController;
+        console.log('Index.html script loaded');
         
-        // Create authentication model instance
+        // Initialize auth service
         const auth = new Auth();
+        console.log('Auth service initialized');
         
-        // Set up browser history navigation handler
-        window.addEventListener('popstate', handleRoute);
-        
-        // Initialize the application when DOM is fully loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            // Create auth controller instance
-            authController = new AuthController();
-            
-            // Handle the initial route based on URL
-            handleRoute();
-            
-            // Create animated background elements
-            createBackgroundElements();
-        });
-
-        // Route handling function to manage application views
+        // Handle routing
         function handleRoute() {
+            console.log('handleRoute called');
             // Get current URL path
             const path = window.location.pathname;
             const hostname = window.location.hostname;
-            const port = window.location.port;
             
-            // Check if we're on localhost:8083
-            const isLocalhost = hostname === 'localhost' && port === '8083';
+            console.log('Current path:', path);
+            console.log('Hostname:', hostname);
             
-            // If not on localhost:8083, show error page
-            if (!isLocalhost && hostname !== '127.0.0.1') {
-                showErrorPage();
-                return;
+            // Allow both localhost and GitHub Pages
+            const isGitHubPages = hostname.includes('github.io');
+            const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+            
+            console.log('Is GitHub Pages:', isGitHubPages);
+            console.log('Is localhost:', isLocalhost);
+            
+            // Get the repository name from the path if on GitHub Pages
+            let basePath = '';
+            if (isGitHubPages) {
+                // Extract the repository name from the path
+                const pathParts = path.split('/');
+                if (pathParts.length > 1) {
+                    basePath = '/' + pathParts[1];
+                }
             }
             
-            // Valid routes for localhost
-            if (path === '/' || path === '/profile/') {
+            console.log('Base path:', basePath);
+            
+            // Valid routes
+            const homePath = basePath + '/';
+            const profilePath = basePath + '/profile/';
+            
+            console.log('Home path:', homePath);
+            console.log('Profile path:', profilePath);
+            
+            if (path === homePath || path === profilePath) {
+                console.log('Valid route detected:', path);
+                
                 // Profile route logic
-                if (path === '/profile/') {
+                if (path === profilePath) {
+                    console.log('Profile route detected');
                     // Redirect to login if not authenticated
                     if (!auth.isAuthenticated()) {
-                        history.pushState(null, '', '/');
-                        authController.showLogin();
+                        console.log('Not authenticated, redirecting to login');
+                        window.location.href = homePath;
                         return;
                     }
-                    // Show profile for authenticated users
-                    authController.showProfile();
-                } else {
-                    // Redirect to profile if already authenticated
-                    if (auth.isAuthenticated()) {
-                        history.pushState(null, '', '/profile/');
-                        authController.showProfile();
-                        return;
-                    }
-                    // Show login for non-authenticated users
-                    authController.showLogin();
+                    console.log('Authenticated, showing profile');
+                }
+                
+                // Initialize the auth controller
+                console.log('Initializing AuthController');
+                try {
+                    new AuthController();
+                    console.log('AuthController initialized successfully');
+                } catch (error) {
+                    console.error('Error initializing AuthController:', error);
                 }
             } else {
-                // For any other route, show error page
-                showErrorPage();
+                console.log('Invalid route detected:', path);
+                showErrorPage(basePath);
             }
         }
         
-        // Simple function to show error page
-        function showErrorPage() {
-            const appContainer = document.getElementById('app');
-            appContainer.innerHTML = `
-                <div class="flex flex-col items-center justify-center min-h-screen p-4 text-center">
-                    <div class="glassmorphism-card p-8 max-w-lg w-full">
-                        <h1 class="text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">404</h1>
-                        <h2 class="text-2xl font-semibold mb-4 text-white">Page Not Found</h2>
-                        <p class="text-gray-300 mb-8">The page you are looking for doesn't exist or has been moved.</p>
-                        
-                        <div class="my-8">
-                            <svg width="200" height="120" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="mx-auto">
-                                <path d="M20 50H180M20 50L40 20H160L180 50M20 50V100H180V50" stroke="#3B82F6" stroke-width="2"/>
-                                <path d="M80 70L100 90L120 70" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M100 90V50" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                        </div>
-                        
-                        <button id="go-home-btn" class="btn-modern">
-                            <i class="fas fa-home mr-2"></i>
-                            Go to Homepage
-                        </button>
-                    </div>
-                </div>
-            `;
-
+        // Show error page
+        function showErrorPage(basePath = '') {
+            document.getElementById('app').classList.add('hidden');
+            document.getElementById('error-page').classList.remove('hidden');
+            
             // Add event listener to the home button
             const homeBtn = document.getElementById('go-home-btn');
             if (homeBtn) {
                 homeBtn.addEventListener('click', () => {
-                    window.location.href = '/';
+                    window.location.href = basePath + '/';
                 });
             }
         }
         
-        // Function to create dynamic background elements
-        function createBackgroundElements() {
-            const bgAnimation = document.querySelector('.bg-animation');
-            for (let i = 0; i < 15; i++) {
-                const span = document.createElement('span');
-                span.style.top = Math.random() * 100 + '%';
-                span.style.left = Math.random() * 100 + '%';
-                span.style.width = Math.random() * 80 + 20 + 'px';
-                span.style.height = span.style.width;
-                span.style.animationDelay = Math.random() * 15 + 's';
-                span.style.animationDuration = Math.random() * 20 + 15 + 's';
-                bgAnimation.appendChild(span);
-            }
-        }
+        // Call handleRoute when the page loads
+        window.addEventListener('DOMContentLoaded', handleRoute);
+        
+        // Listen for navigation events
+        window.addEventListener('popstate', handleRoute);
     </script>
 </body>
 </html>
