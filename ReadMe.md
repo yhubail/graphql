@@ -2,7 +2,7 @@
 
 A professional, data-driven web application that provides comprehensive visualization of user profile data from a GraphQL API.
 
-## [View Live ](https://yhubail.github.io/graphql/)
+## [View Live ](https://yhubail.github.io/)
 
 
 ## Overview
