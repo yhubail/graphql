@@ -43,8 +43,7 @@ export class AuthController {
     setupEventListeners() {
         // Listen for logout events dispatched by other components
         window.addEventListener('auth:logout', () => {
-            // Navigate to home page
-            history.pushState(null, '', '/');
+
             
             // Show the login view
             this.showLogin();
