@@ -24,14 +24,18 @@ export class AuthController {
      * for authentication state changes.
      */
     constructor() {
-        // Initialize the authentication model
+        console.log('AuthController constructor called');
+        this.authService = new AuthService();
         this.auth = new Auth();
         
-        // Get reference to the main application container
-        this.container = document.getElementById('app');
-        
-        // Set up event listeners for auth-related events
-        this.setupEventListeners();
+        // Check if user is authenticated
+        if (this.auth.isAuthenticated()) {
+            console.log('User is authenticated');
+            this.showProfile();
+        } else {
+            console.log('User is not authenticated, showing login form');
+            this.showLoginForm();
+        }
     }
 
     /**
@@ -97,5 +101,15 @@ export class AuthController {
     showProfile() {
         // Initialize the profile controller with the main container
         new ProfileController(this.container);
+    }
+
+    showLoginForm() {
+        console.log('Rendering login form');
+        // Create and render the login view
+        const loginView = new LoginView(this.container);
+        loginView.render();
+        
+        // Bind the login form submission to the handler method
+        loginView.onSubmit = this.handleLogin.bind(this);
     }
 }

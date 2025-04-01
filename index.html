@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Custom CSS for application-specific styling -->
-    <link rel="stylesheet" href="./src/public/css/style.css">
+    <link rel="stylesheet" href="./styles/main.css">
     
     <style>
         /* Modern UI styling with enhanced visuals */
@@ -186,7 +186,7 @@
     </style>
 </head>
 
-<body class="min-h-screen">
+<body class="bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen">
     <!-- Animated background elements -->
     <div class="bg-animation">
         <span style="top:80%; left:20%; animation-delay: 0s;"></span>
@@ -199,71 +199,82 @@
     </div>
 
     <!-- Main application container with responsive padding -->
-    <div id="app" class="container mx-auto p-6">
-        <!-- The welcome card has been removed -->
+    <div id="app" class="container mx-auto px-4 py-8">
+        <!-- This is where your login form will be rendered -->
+    </div>
+    
+    <!-- Error page container -->
+    <div id="error-page" class="hidden">
+        <!-- Error page content -->
     </div>
     
     <!-- Main application JavaScript using ES modules -->
     <script type="module">
-        // Import necessary controller and model classes
+        // Import the main app module with a relative path
         import { AuthController } from './src/controllers/AuthController.js';
-        import { Auth } from './src/models/Auth.js';
+        import { Auth } from './src/services/Auth.js';
         
-        // Initialize controller variable for global scope access
-        let authController;
+        console.log('Index.html script loaded');
         
-        // Create authentication model instance
+        // Initialize auth service
         const auth = new Auth();
+        console.log('Auth service initialized');
         
-        // Set up browser history navigation handler
-        window.addEventListener('popstate', handleRoute);
-        
-        // Initialize the application when DOM is fully loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            // Create auth controller instance
-            authController = new AuthController();
-            
-            // Handle the initial route based on URL
-            handleRoute();
-            
-            // Create animated background elements
-            createBackgroundElements();
-        });
-
-        // Route handling function to manage application views
+        // Handle routing
         function handleRoute() {
+            console.log('handleRoute called');
             // Get current URL path
             const path = window.location.pathname;
             const hostname = window.location.hostname;
             const port = window.location.port;
             
+            console.log('Current path:', path);
+            console.log('Hostname:', hostname);
+            
             // Allow GitHub Pages domain in addition to localhost
             const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
             const isGitHubPages = hostname.includes('github.io');
             
+            console.log('Is localhost:', isLocalhost);
+            console.log('Is GitHub Pages:', isGitHubPages);
+            
             // If not on localhost or GitHub Pages, show error page
             if (!isLocalhost && !isGitHubPages) {
+                console.log('Showing error page - invalid domain');
                 showErrorPage();
                 return;
             }
             
             // Extract the base path for GitHub Pages
             const basePath = hostname.includes('github.io') ? '/graphql' : '';
+            console.log('Base path:', basePath);
             
             // Valid routes
             if (path === '/' || path === basePath + '/' || path === basePath + '/profile/') {
+                console.log('Valid route detected:', path);
+                
                 // Profile route logic
                 if (path === basePath + '/profile/') {
+                    console.log('Profile route detected');
                     // Redirect to login if not authenticated
                     if (!auth.isAuthenticated()) {
+                        console.log('Not authenticated, redirecting to login');
                         window.location.href = basePath + '/';
+                        return;
                     }
+                    console.log('Authenticated, showing profile');
                 }
                 
                 // Initialize the auth controller
-                new AuthController();
+                console.log('Initializing AuthController');
+                try {
+                    new AuthController();
+                    console.log('AuthController initialized successfully');
+                } catch (error) {
+                    console.error('Error initializing AuthController:', error);
+                }
             } else {
-                // Show error for invalid routes
+                console.log('Invalid route detected:', path);
                 showErrorPage();
             }
         }
